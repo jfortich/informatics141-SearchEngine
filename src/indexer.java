@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 
@@ -14,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.jsoup.Jsoup;
 
@@ -105,9 +103,9 @@ public class indexer {
 		    // Sorts and prints the term2termid dictionary
 		    System.out.print(term2termid + "");
 		    System.out.println("SORTED term2termid DICTIONARY:");
-		    Iterator it = sortHashMapByValues(term2termid).entrySet().iterator();
+		    Iterator<Map.Entry<String, Integer>> it = sortHashMapByValues(term2termid).entrySet().iterator();
 		    while (it.hasNext()) {
-		        Map.Entry pair = (Map.Entry)it.next();
+		        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)it.next();
 		        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
 		        it.remove(); // avoids a ConcurrentModificationException
 		    }
@@ -120,7 +118,7 @@ public class indexer {
 	
 	
 	/**
-	 * Solution: https://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
+	 * Sorting method: https://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
 	 * 
 	 * Takes a HashMap {@passedMap} and sorts the the hashmap by it's values which
 	 * are Integers
@@ -159,14 +157,18 @@ public class indexer {
 		   return sortedMap;
 		}
 	
+	
+	/**
+	 * Main function to run the indexer
+	 */
 	public static void main(String[] args) throws Exception {
-	    String file = "C:\\Users\\Jasmine\\Documents\\Search Engine Data\\Html\\access.ics.uci.educontact.html";
+//	    String file = "C:\\Users\\Jasmine\\Documents\\Search Engine Data\\Html\\access.ics.uci.educontact.html";
 	    String directory = "C:\\Users\\Jasmine\\Documents\\Search Engine Data\\smallTest";
 	    
 	    File dir = new File(directory);
 	    File[] directoryListing = dir.listFiles();
 	    String list = Arrays.toString(directoryListing);
-//	    System.out.print(list + "\n\n");
+	    System.out.print(list + "\n\n");
 	    
 	    
 	    // Solution: https://stackoverflow.com/questions/4917326/how-to-iterate-over-the-files-of-a-certain-directory-in-java
@@ -186,7 +188,9 @@ public class indexer {
 	    	System.out.print("else happened");
 	      }	      
 	    
-	    // Sorts and prints the term2termid dictionary
+	    
+	    // Sorts and prints the term2termid dictionary 
+	    // BUG: Starts printing at id "17" instead of "1"
 //	    System.out.print(term2termid + "");
 //	    System.out.println("SORTED term2termid DICTIONARY:");
 //	    Iterator it = sortHashMapByValues(term2termid).entrySet().iterator();
@@ -199,9 +203,9 @@ public class indexer {
 	    // Sorts and prints the docID dictionary
 	    System.out.print("\n\n" + docID + "");
 	    System.out.println("SORTED docID DICTIONARY:");
-	    Iterator it = sortHashMapByValues(docID).entrySet().iterator();
+	    Iterator<Map.Entry<String, Integer>> it = sortHashMapByValues(docID).entrySet().iterator();
 	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
+	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)it.next();
 	        System.out.printf("%-100s %d %n",pair.getKey(), pair.getValue());
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
