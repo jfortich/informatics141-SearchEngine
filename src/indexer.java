@@ -89,7 +89,7 @@ public class indexer {
 	        for (String token : tokens) {
 	        	if (!STOP_WORDS.contains(token) && !check.contains(token)){
 	        		termID = termID + 1;
-		        	term2termid.put(token, termID);
+	        		term2termid.put(token, termID);
 		        	check.add(token);
 	        	}
 	        }
@@ -101,14 +101,14 @@ public class indexer {
 		    
 		    
 		    // Sorts and prints the term2termid dictionary
-		    System.out.print(term2termid + "");
-		    System.out.println("SORTED term2termid DICTIONARY:");
-		    Iterator<Map.Entry<String, Integer>> it = sortHashMapByValues(term2termid).entrySet().iterator();
-		    while (it.hasNext()) {
-		        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)it.next();
-		        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
-		        it.remove(); // avoids a ConcurrentModificationException
-		    }
+//		    System.out.print(term2termid + "");
+//		    System.out.println("SORTED term2termid DICTIONARY:");
+//		    Iterator<Map.Entry<String, Integer>> it = sortHashMapByValues(term2termid).entrySet().iterator();
+//		    while (it.hasNext()) {
+//		        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)it.next();
+//		        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
+//		        it.remove(); // avoids a ConcurrentModificationException
+//		    }
 		    
 		}
 	    catch (IOException e) {
@@ -157,7 +157,6 @@ public class indexer {
 		   return sortedMap;
 		}
 	
-	
 	/**
 	 * Main function to run the indexer
 	 */
@@ -191,23 +190,23 @@ public class indexer {
 	    
 	    // Sorts and prints the term2termid dictionary 
 	    // BUG: Starts printing at id "17" instead of "1"
-//	    System.out.print(term2termid + "");
-//	    System.out.println("SORTED term2termid DICTIONARY:");
-//	    Iterator it = sortHashMapByValues(term2termid).entrySet().iterator();
-//	    while (it.hasNext()) {
-//	        Map.Entry pair = (Map.Entry)it.next();
-//	        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
-//	        it.remove(); // avoids a ConcurrentModificationException
-//	    }
+	    System.out.print("\n\n" + term2termid + "\n");
+	    System.out.println("SORTED term2termid DICTIONARY:");
+	    Iterator<Map.Entry<String, Integer>> term2termidIt = sortHashMapByValues(term2termid).entrySet().iterator();
+	    while (term2termidIt.hasNext()) {
+	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)term2termidIt.next();
+	        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
+	        term2termidIt.remove(); // avoids a ConcurrentModificationException
+	    }
 	    
 	    // Sorts and prints the docID dictionary
 	    System.out.print("\n\n" + docID + "");
 	    System.out.println("SORTED docID DICTIONARY:");
-	    Iterator<Map.Entry<String, Integer>> it = sortHashMapByValues(docID).entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)it.next();
+	    Iterator<Map.Entry<String, Integer>> docIDIt = sortHashMapByValues(docID).entrySet().iterator();
+	    while (docIDIt.hasNext()) {
+	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)docIDIt.next();
 	        System.out.printf("%-100s %d %n",pair.getKey(), pair.getValue());
-	        it.remove(); // avoids a ConcurrentModificationException
+	        docIDIt.remove(); // avoids a ConcurrentModificationException
 	    }
 
 
