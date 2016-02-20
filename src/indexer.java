@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,9 +71,11 @@ public class indexer {
 	 * dictionary with each entry organized as <term, termID>
 	 * 
 	 * @param page The HTML page that needs to be processed and parsed
+	 * @return 
 	 */
-	public static void processPage (File page) {
+	public static HashMap<String, Integer> processPage (File page) {
 		HashSet<String> check = new HashSet<String>();
+		HashMap<String, Integer> termid = new HashMap<String, Integer>();
 		String content = "";
 		try {
 	        BufferedReader in = new BufferedReader(new FileReader(page));
@@ -89,10 +92,12 @@ public class indexer {
 	        for (String token : tokens) {
 	        	if (!STOP_WORDS.contains(token) && !check.contains(token)){
 	        		termID = termID + 1;
+//	        		termid.put(token, termID);
 	        		term2termid.put(token, termID);
 		        	check.add(token);
 	        	}
 	        }
+	   
 	        
 			
 //		    System.out.print("Content: " + parsedHTML + "\n");
@@ -100,7 +105,7 @@ public class indexer {
 //		    System.out.print(term2termid+"\n\n");	
 		    
 		    
-		    // Sorts and prints the term2termid dictionary
+		    ///Sorts and prints the term2termid dictionary
 //		    System.out.print(term2termid + "");
 //		    System.out.println("SORTED term2termid DICTIONARY:");
 //		    Iterator<Map.Entry<String, Integer>> it = sortHashMapByValues(term2termid).entrySet().iterator();
@@ -111,9 +116,12 @@ public class indexer {
 //		    }
 		    
 		}
+		
 	    catch (IOException e) {
 		e.printStackTrace();
 	    }
+		
+		return termid;
 	}
 	
 	
@@ -176,7 +184,23 @@ public class indexer {
 	    		System.out.print(child + "\n\n");
 	    		uniqueDocID = uniqueDocID + 1;
 	    		docID.put(child.toString(), uniqueDocID);
-	    		processPage(child);
+//	    		processPage(child);
+	    		
+	    		HashMap<String, Integer> processed = processPage(child);
+	    		
+//	    		ArrayList<String> words = new ArrayList<String>();
+//	    		words.add(0, "something");
+//	    	    Iterator<Map.Entry<String, Integer>> it = processed.entrySet().iterator();
+//	    	    while (it.hasNext()) {
+//	    	    	Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)it.next();
+//	    	    	words.add(pair.getValue(), pair.getKey());
+//	    	        it.remove(); // avoids a ConcurrentModificationException
+//	    	    }
+	    		
+//	    		System.out.print(words + "\n");
+	    		
+//	    		System.out.print(processed);
+	    		term2termid.putAll(processed);
 	    	}
 	    	
 	      } else {
@@ -191,13 +215,15 @@ public class indexer {
 	    // Sorts and prints the term2termid dictionary 
 	    // BUG: Starts printing at id "17" instead of "1"
 	    System.out.print("\n\n" + term2termid + "\n");
-	    System.out.println("SORTED term2termid DICTIONARY:");
-	    Iterator<Map.Entry<String, Integer>> term2termidIt = sortHashMapByValues(term2termid).entrySet().iterator();
-	    while (term2termidIt.hasNext()) {
-	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)term2termidIt.next();
-	        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
-	        term2termidIt.remove(); // avoids a ConcurrentModificationException
-	    }
+//	    System.out.println("SORTED term2termid DICTIONARY:");
+//	    Iterator<Map.Entry<String, Integer>> term2termidIt = sortHashMapByValues(term2termid).entrySet().iterator();
+//	    while (term2termidIt.hasNext()) {
+//	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)term2termidIt.next();
+//	        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
+//	        term2termidIt.remove(); // avoids a ConcurrentModificationException
+//	    }
+	    
+	    System.out.print(termID + "\n\n");
 	    
 	    // Sorts and prints the docID dictionary
 	    System.out.print("\n\n" + docID + "");
