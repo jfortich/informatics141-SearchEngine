@@ -98,7 +98,6 @@ public class indexer {
 		return tokens;
 	}
 	
-	
 
 	/**
 	 * Takes a list of tokenized words {@tokens} from the document's page 
@@ -109,20 +108,17 @@ public class indexer {
 	 * @return Returns a hashmap of terms and their corresponding term ID
 	 */
 	public static HashMap<String, Integer> createTerm2TermID (ArrayList<String> tokens) {
-		// Initialize variables
-		HashMap<String, Integer> words = new HashMap<String, Integer>();
-	        // Goes through all tokens and adds those that are not a Stop Word
-		    // 
-	        for (String token : tokens) {
-	        	if (!STOP_WORDS.contains(token) && !term2termid.containsKey(token)) {
-	        		termID = termID + 1;
-	        		term2termid.put(token, termID);
-  	
-	        	}
-	        }
+        // Goes through all tokens and adds those that are not a Stop Word to term2termid
+        for (String token : tokens) {
+        	if (!STOP_WORDS.contains(token) && !term2termid.containsKey(token)) {
+        		termID = termID + 1;
+        		term2termid.put(token, termID);
 
-		return words;
+        	}
+        }
+		return term2termid;
 	}
+	
 	
 	/**
 	 * Creates an inverse of the term2termID dictionary where the key is 
