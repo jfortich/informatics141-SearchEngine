@@ -185,7 +185,7 @@ public class indexer {
 	 * Sorting method: https://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
 	 * 
 	 * Takes a HashMap {@passedMap} and sorts the the hashmap by it's values which
-	 * are Integers
+	 * are Integers; Used solely to format and view data 
 	 * 
 	 * @param passedMap A HashMap whose keys are Strings and values are Integers
 	 * @return A sorted version of the hashmap ordered by it's values in ascending order
