@@ -108,7 +108,7 @@ public class indexer {
 	 * @param tokens An arraylist of tokens found on a document's page
 	 * @return Returns a hashmap of terms and their corresponding term ID
 	 */
-	public static HashMap<String, Integer> createTerm2Term (ArrayList<String> tokens) {
+	public static HashMap<String, Integer> createTerm2TermID (ArrayList<String> tokens) {
 		// Initialize variables
 		HashMap<String, Integer> words = new HashMap<String, Integer>();
 	        // Goes through all tokens and adds those that are not a Stop Word
@@ -124,6 +124,23 @@ public class indexer {
 		return words;
 	}
 	
+	/**
+	 * Creates an inverse of the term2termID dictionary where the key is 
+	 * the term's termID and the corresponding value is the term's string
+	 * 
+	 * @param term2termID A HashMap<String,Integer> of the original dictionary
+	 * which contains the term's string as the key and the term's termID as the 
+	 * value
+	 * @return Returns a HashMap<Integer,String> which is the inverse of the 
+	 * original dictionary 
+	 */
+	public static HashMap<Integer, String> createTermID2Term (HashMap<String, Integer> term2termID) {
+		for (Map.Entry<String, Integer> termItem : term2termID.entrySet()) {
+			termid2term.put(termItem.getValue(), termItem.getKey());
+		}
+		return termid2term;
+	}
+	
 	
 	/**
 	 * Creates the docID2termList which maps out a document's ID to the 
@@ -133,8 +150,8 @@ public class indexer {
 	 * corresponding termIDs
 	 * @param docIDList HashMap<String, Integer> of documents and their
 	 * corresponding docIDs
-	 * @return HashMap<Integer, ArrayList<Integer>>  that contains the 
-	 * docID and corresponding list of termIDs found on the doc
+	 * @return Returns aHashMap<Integer, ArrayList<Integer>>  that contains 
+	 * the docID and corresponding list of termIDs found on the doc
 	 */
 	public static HashMap<Integer, ArrayList<Integer>> createDocID2TermList (HashMap<String,Integer> term2termIdList, HashMap<String,Integer> docIDList) {
 		// Goes through each document and processes the page;
@@ -222,7 +239,7 @@ public class indexer {
 	    		uniqueDocID = uniqueDocID + 1;
 	    		docID.put(child.toString(), uniqueDocID);
 	    		ArrayList<String> t = processPage(child);
-	    		createTerm2Term(t);
+	    		createTerm2TermID(t);
 	    	}
 	    	
 	    	
@@ -232,7 +249,7 @@ public class indexer {
 	      }	      
 	    
 	    System.out.println(createDocID2TermList(term2termid, docID));
-	    
+	    System.out.println(createTermID2Term(term2termid));
 	    
 	    
 	    // Sorts and prints the term2termid dictionary 
