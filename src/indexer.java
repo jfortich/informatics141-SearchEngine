@@ -55,10 +55,10 @@ public class indexer {
 	// Initialization of hashmaps and other variables
 	static HashMap<String, Integer> term2termid = new HashMap<String, Integer>();
 	static HashMap<String, Integer> docID = new HashMap<String, Integer>();
-	static HashMap<Integer, ArrayList<Integer>> docid2termlist = new HashMap<Integer, ArrayList<Integer>>();
 	static HashMap<Integer, String> termid2term = new HashMap<Integer, String>();
 	static int termID = 0;
 	static int uniqueDocID  = 0;
+	static long startingTime = System.currentTimeMillis();
 
 	
 	/**
@@ -150,6 +150,7 @@ public class indexer {
 	 * the docID and corresponding list of termIDs found on the doc
 	 */
 	public static HashMap<Integer, ArrayList<Integer>> createDocID2TermList (HashMap<String,Integer> term2termIdList, HashMap<String,Integer> docIDList) {
+		HashMap<Integer, ArrayList<Integer>> docid2termlist = new HashMap<Integer, ArrayList<Integer>>();
 		// Goes through each document and processes the page;
 		// Tokenizes each word found on the page
 		for (Map.Entry <String, Integer> docID : docIDList.entrySet()) {
@@ -175,6 +176,52 @@ public class indexer {
 		return docid2termlist;
 		
 	}
+	
+	/**
+	 * Creates a term2DocIDWordFreq dictionary which contains the word's 
+	 * termID and a correspond list of docIDs and the frequency of the word
+	 * on that document
+	 *  
+	 * @param term2termIdList Hashmap<String, Integer> of terms and their
+	 * corresponding termIDs
+	 * @param docIDList HashMap<String, Integer> of documents and their
+	 * corresponding docIDs
+	 * @return term2docIDWordFreq HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>
+	 */
+	public static HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> createTerm2DocIDWordFreq(HashMap<String,Integer> term2termIdList, HashMap<String,Integer> docIDList) {
+		// Initialize variables
+		HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> term2DocIDWordFreq = new HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>();
+		
+		// Goes through each term from the term2termID dictionary
+		for (Map.Entry<String, Integer> term : term2termIdList.entrySet()) {
+			
+			// Temporary HashMap to store docID and term frequencies
+			ArrayList<HashMap<Integer, Integer>> docIDFrequencies = new ArrayList<HashMap<Integer, Integer>>();
+			
+			// Goes through each document and counts the frequency of the term in each doc
+			for (Map.Entry<String, Integer> doc : docIDList.entrySet()) {
+				int frequency = 0;
+				HashMap<Integer, Integer> docIDFrequency = new HashMap<Integer, Integer>();
+				File directory = new File(doc.getKey());
+				ArrayList<String> tokens = processPage(directory);
+//				int frequencyCount = Collections.frequency(tokens, term);
+				for (String token : tokens) {
+					if (token.compareTo(term.getKey()) == 0) {
+						frequency++;
+					}
+				}
+				docIDFrequency.put(doc.getValue(), frequency);	
+				docIDFrequencies.add(docIDFrequency);
+			}
+		
+			// Adds the term ID and the list of doc IDs and the term's frequency to ther term2DocIDWordFrequency dictionary
+			term2DocIDWordFreq.put(term.getValue(), docIDFrequencies);
+			
+		}
+		return term2DocIDWordFreq;
+	}
+	
+	
 	
 	
 	/**
@@ -216,7 +263,6 @@ public class indexer {
 		}
 	
 	
-	
 	/**
 	 * Main function to run the indexer
 	 */
@@ -229,7 +275,7 @@ public class indexer {
 //	    String list = Arrays.toString(directoryListing);
 	    
 	    
-	    // Solution: https://stackoverflow.com/questions/4917326/how-to-iterate-over-the-files-of-a-certain-directory-in-java
+	    // Solution help: https://stackoverflow.com/questions/4917326/how-to-iterate-over-the-files-of-a-certain-directory-in-java
 	    if (directoryListing != null) {
 	    	for (File child : directoryListing ) {
 	    		uniqueDocID = uniqueDocID + 1;
@@ -244,33 +290,42 @@ public class indexer {
 	    	System.out.print("else happened");
 	      }	      
 	    
-	    System.out.println(createDocID2TermList(term2termid, docID));
-	    System.out.println(createTermID2Term(term2termid));
+	    HashMap<Integer, ArrayList<Integer>> docID2TermList = createDocID2TermList(term2termid, docID);
+	    HashMap<Integer, String> termID2Term = createTermID2Term(term2termid);
+	    HashMap<Integer, ArrayList<HashMap<Integer,Integer>>> term2docIDwordfreq = createTerm2DocIDWordFreq(term2termid, docID);
 	    
+	    
+	    System.out.print("Term2Termid DICTIONARY: \n	" + term2termid + "\n\n");
+	    System.out.println("DocID2TermList DICTIONARY: \n	" + docID2TermList + "\n\n");
+	    System.out.println("TermID2Term DICTIONARY: \n	" + termID2Term + "\n\n");
+	    System.out.print("docID DICTIONARY: \n	" + docID + "\n\n");
+	    System.out.print("Term2DocIDWordFrequency DICTIONARY: \n	" + term2docIDwordfreq + "\n\n");
 	    
 	    // Sorts and prints the term2termid dictionary 
-	    // BUG: Starts printing at id "17" instead of "1"
-	    System.out.print("\n\n UNSORTED: " + term2termid + "\n");
-	    System.out.println("SORTED term2termid DICTIONARY:");
-	    Iterator<Map.Entry<String, Integer>> term2termidIt = sortHashMapByValues(term2termid).entrySet().iterator();
-	    while (term2termidIt.hasNext()) {
-	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)term2termidIt.next();
-	        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
-	        term2termidIt.remove(); // avoids a ConcurrentModificationException
-	    }
+//	    System.out.println("SORTED term2termid DICTIONARY:");
+//	    Iterator<Map.Entry<String, Integer>> term2termidIt = sortHashMapByValues(term2termid).entrySet().iterator();
+//	    while (term2termidIt.hasNext()) {
+//	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)term2termidIt.next();
+//	        System.out.printf("%-20s %d %n",pair.getKey(), pair.getValue());
+//	        term2termidIt.remove(); // avoids a ConcurrentModificationException
+//	    }
 	    
 	    
-//	    // Sorts and prints the docID dictionary
-	    System.out.print("\n\n" + docID + "");
-	    System.out.println("SORTED docID DICTIONARY:");
-	    Iterator<Map.Entry<String, Integer>> docIDIt = sortHashMapByValues(docID).entrySet().iterator();
-	    while (docIDIt.hasNext()) {
-	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)docIDIt.next();
-	        System.out.printf("%-100s %d %n",pair.getKey(), pair.getValue());
-	        docIDIt.remove(); // avoids a ConcurrentModificationException
-	    }
-
-
+//	    // Sorts and prints the docID dictionary	    
+//	    System.out.println("SORTED docID DICTIONARY:");
+//	    Iterator<Map.Entry<String, Integer>> docIDIt = sortHashMapByValues(docID).entrySet().iterator();
+//	    while (docIDIt.hasNext()) {
+//	        Map.Entry<String, Integer> pair = (Map.Entry<String, Integer>)docIDIt.next();
+//	        System.out.printf("%-100s %d %n",pair.getKey(), pair.getValue());
+//	        docIDIt.remove(); // avoids a ConcurrentModificationException
+//	    }
+	    
+	    System.out.print("\n      STATISTICS:\n");
+		long endingTime   = System.currentTimeMillis();
+		long totalRunTime = endingTime - startingTime;
+		System.out.print("	+ FINAL RUNTIME: " + totalRunTime + "\n");
+		System.out.print("	+ TOTAL NUMBER OF DOCUMENTS: " + docID.size() + "\n");
+		System.out.print("	+ # OF UNIQUE TERMS: " + term2termid.size() + "\n");
 
 	}
 
