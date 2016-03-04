@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import org.jsoup.Jsoup;
 
@@ -68,23 +70,35 @@ public class parseHTML {
 	 */
 	public static void main(String[] args) throws Exception {
 //	    String file = "C:\\Users\\Jasmine\\Documents\\Search Engine Data\\Html\\access.ics.uci.educontact.html";
-	    String directory = "C:\\Users\\Jasmine\\Documents\\Search Engine Data\\smallTest";
-	    
-	    File dir = new File(directory);
-	    File[] directoryListing = dir.listFiles();
-	    
-	    // Solution help: https://stackoverflow.com/questions/4917326/how-to-iterate-over-the-files-of-a-certain-directory-in-java
-	    if (directoryListing != null) {
-	    	for (File child : directoryListing ) {
-	    		System.out.print("Processing page " + docID + " ... \n");
-	    		processHTMLPage(child);
-	    	}
-	    	
-	    	System.out.print("\nFinished processed all HTML files!");
-	    	
-	      } else {
-	        // Handle the case where dir is not really a directory.
-	    	System.out.print("else happened");
-	      }
+//	    String directory = "C:\\Users\\Jasmine\\Documents\\Search Engine Data\\Html";
+//	    
+//	    File dir = new File(directory);
+//	    File[] directoryListing = dir.listFiles();
+//	    
+//	    // Solution help: https://stackoverflow.com/questions/4917326/how-to-iterate-over-the-files-of-a-certain-directory-in-java
+//	    if (directoryListing != null) {
+//	    	for (File child : directoryListing ) {
+//	    		System.out.print("Processing page " + docID + " ... \n");
+//	    		processHTMLPage(child);
+//	    	}
+//	    	
+//	    	System.out.print("\nFinished processed all HTML files!");
+//	    	
+//	      } else {
+//	        // Handle the case where dir is not really a directory.
+//	    	System.out.print("else happened");
+//	      }
+		ArrayList<String> words = new ArrayList<String>();
+		words.add("computer");
+		words.add("computer");
+		words.add("computer");
+		words.add("computer");
+		words.add("a");
+		words.add("b");
+		words.add("b");
+		words.add("computer");
+		
+		System.out.print(Collections.frequency(words, "b"));
+
 	}
 }

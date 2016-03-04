@@ -3,17 +3,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-
-
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.jsoup.Jsoup;
 
 import com.google.common.collect.ImmutableList;
 
@@ -72,7 +64,9 @@ public class indexer {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    
-		       String info[] = line.split("~`~");
+//		       String info[] = line.split("~`~");
+			   String info[] = line.split(";");
+
 		       
 		       if (info.length == 3) {
 //			       System.out.print(Arrays.toString(info));
@@ -87,7 +81,7 @@ public class indexer {
 			       createTerm2TermID(tokens);
 			       createTermID2Term(term2termid);
 			       createDocID2TermList(tokens, docID, term2termid);
-//			       createTerm2DocIDWordFreq(tokens, term2termid, docIDdictionary);
+			       createTerm2DocIDWordFreq(term2termid, docid2termlist);
 		       }
 		       
 		    }
@@ -181,31 +175,47 @@ public class indexer {
 	 * corresponding docIDs
 	 * @return term2docIDWordFreq HashMap<Integer, ArrayList<HashMap<Integer, Integer>>>
 	 */
-	public static HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> createTerm2DocIDWordFreq(ArrayList<String> tokens, HashMap<String,Integer> term2termIdList, HashMap<String,Integer> docIDList) {		
-		// Goes through each term from the term2termID dictionary
-		for (Map.Entry<String, Integer> term : term2termIdList.entrySet()) {
+	public static HashMap<Integer, ArrayList<HashMap<Integer, Integer>>> createTerm2DocIDWordFreq(HashMap<String, Integer> term2termIDList, HashMap<Integer, ArrayList<Integer>> docID2TermList) {		
+		
+		for (Map.Entry<String, Integer> term : term2termIDList.entrySet()) {
 			
 			// Temporary HashMap to store docID and term frequencies
 			ArrayList<HashMap<Integer, Integer>> docIDFrequencies = new ArrayList<HashMap<Integer, Integer>>();
 			
-			// Goes through each document and counts the frequency of the term in each doc
-			for (Map.Entry<String, Integer> doc : docIDList.entrySet()) {
-				int frequency = 0;
+			for (Map.Entry<Integer, ArrayList<Integer>> doc : docID2TermList.entrySet()) {
 				HashMap<Integer, Integer> docIDFrequency = new HashMap<Integer, Integer>();
-
-				for (String token : tokens) {
-					if (token.compareTo(term.getKey()) == 0) {
-						frequency++;
-					}
-				}
-				docIDFrequency.put(doc.getValue(), frequency);	
+				int frequency = 0;
+				frequency = Collections.frequency(doc.getValue(), term.getValue());
+				docIDFrequency.put(doc.getKey(), frequency);
 				docIDFrequencies.add(docIDFrequency);
 			}
-		
-			// Adds the term ID and the list of doc IDs and the term's frequency to ther term2DocIDWordFrequency dictionary
+			
 			term2DocIDWordFreq.put(term.getValue(), docIDFrequencies);
 			
 		}
+		
+		
+//		int frequency = 0;
+//
+//		// Goes through each term from the term2termID dictionary
+//		for (Map.Entry<String, Integer> term : term2termIdList.entrySet()) {
+//			
+//			// Temporary HashMap to store docID and term frequencies
+//			ArrayList<HashMap<Integer, Integer>> docIDFrequencies = new ArrayList<HashMap<Integer, Integer>>();
+//			
+//			
+//			// Goes through each document and counts the frequency of the term in each doc
+//			for (Map.Entry<String, Integer> doc : docIDdictionary.entrySet()) {
+//				HashMap<Integer, Integer> docIDFrequency = new HashMap<Integer, Integer>();
+//				frequency = Collections.frequency(tokens, term.getKey());
+//				docIDFrequency.put(doc.getValue(), frequency);	
+//				docIDFrequencies.add(docIDFrequency);
+//			}
+//			
+//			// Adds the term ID and the list of doc IDs and the term's frequency to ther term2DocIDWordFrequency dictionary
+//			term2DocIDWordFreq.put(term.getValue(), docIDFrequencies);
+//		}
+//		
 		return term2DocIDWordFreq;
 	}
 	
@@ -216,15 +226,16 @@ public class indexer {
 	 */
 	public static void main(String[] args) throws Exception {
 		String dir 	= "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\INF141RJBNwebCrawler\\processedPagesSmall.txt";
-	    String dir2 = "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\informatics141-SearchEngine\\processedHTMLPages.txt";
-		File processed = new File(dir2);
+		String dir2 = "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\INF141RJBNwebCrawler\\ten-processedPages.txt";
+	    String dir3 = "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\informatics141-SearchEngine\\processedHTMLPages.txt";
+	    File processed = new File(dir);
 		buildIndex(processed);
 		
 	    System.out.print("Term2Termid DICTIONARY: \n	" + term2termid + "\n\n");
 	    System.out.println("DocID2TermList DICTIONARY: \n	" + docid2termlist + "\n\n");
 	    System.out.println("TermID2Term DICTIONARY: \n	" + termid2term + "\n\n");
 	    System.out.print("docID DICTIONARY: \n	" + docIDdictionary + "\n\n");
-//	    System.out.print("Term2DocIDWordFrequency DICTIONARY: \n	" + term2DocIDWordFreq + "\n\n");
+	    System.out.print("Term2DocIDWordFrequency DICTIONARY: \n	" + term2DocIDWordFreq + "\n\n");
 
 	}
 
