@@ -3,6 +3,8 @@
  * 
  * DO NOT MODIFY THIS CLASS
  */
+package searchEngine;
+
 public final class Frequency {
 	private final String word;
 	private int frequency;

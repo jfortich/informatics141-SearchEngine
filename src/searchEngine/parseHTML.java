@@ -1,3 +1,11 @@
+/**
+ * INF 141 Information Retrieval
+ * Ricky Fong 			# 821869
+ * Jasmine Fortich		# 46446130
+ * Natalie Kassir		# 14591873
+ */
+package searchEngine;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -82,7 +90,7 @@ public class parseHTML {
 //	    		processHTMLPage(child);
 //	    	}
 //	    	
-//	    	System.out.print("\nFinished processed all HTML files!");
+//	    	System.out.print("\nFinished processing all HTML files!");
 //	    	
 //	      } else {
 //	        // Handle the case where dir is not really a directory.

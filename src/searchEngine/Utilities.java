@@ -1,8 +1,8 @@
-import java.io.File;
+package searchEngine;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * A collection of utility methods for text processing.
