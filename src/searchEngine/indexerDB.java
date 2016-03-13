@@ -19,11 +19,8 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.sql.DataSource;
-
 import searchEngine.DBConnectionManager;
-import com.mchange.v2.c3p0.*;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
 
 
 public class indexerDB {
