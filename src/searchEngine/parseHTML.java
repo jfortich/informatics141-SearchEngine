@@ -4,6 +4,7 @@
  * Jasmine Fortich		# 46446130
  * Natalie Kassir		# 14591873
  */
+
 package searchEngine;
 
 import java.io.BufferedReader;

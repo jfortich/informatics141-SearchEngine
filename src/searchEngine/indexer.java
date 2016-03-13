@@ -1,3 +1,10 @@
+/**
+ * INF 141 Information Retrieval
+ * Ricky Fong 			# 821869
+ * Jasmine Fortich		# 46446130
+ * Natalie Kassir		# 14591873
+ */
+
 package searchEngine;
 
 import java.beans.PropertyVetoException;
@@ -94,7 +101,7 @@ public class indexer {
 			       indexerDB.createTermID2Term();
 			       
 			       // Updates docid2termlist table
-//			       createDocID2TermList(tokens, docID);
+			       createDocID2TermList(tokens, docID);
 			       
 			       // Updates termfrequency table
 			       createTerm2DocIDWordFreq();
@@ -176,7 +183,7 @@ public class indexer {
 	 */
 	public static void main(String[] args) throws Exception {
 //		String dir 	= "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\INF141RJBNwebCrawler\\processedPagesSmall.txt";
-		String dir2 = "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\INF141RJBNwebCrawler\\ten-processedPages.txt";
+//		String dir2 = "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\INF141RJBNwebCrawler\\ten-processedPages.txt";
 	    String dir3 = "C:\\Users\\Jasmine\\Documents\\ICS45J-Jfortich\\informatics141-SearchEngine\\processedHTMLPages.txt";
 	    File processed = new File(dir3);
 		buildIndex(processed);

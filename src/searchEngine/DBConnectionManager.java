@@ -1,3 +1,10 @@
+/**
+ * INF 141 Information Retrieval
+ * Ricky Fong 			# 821869
+ * Jasmine Fortich		# 46446130
+ * Natalie Kassir		# 14591873
+ */
+
 package searchEngine;
 
 import java.util.*;

@@ -4,28 +4,21 @@
  * Jasmine Fortich		# 46446130
  * Natalie Kassir		# 14591873
  */
+
 package searchEngine;
 
 import java.beans.PropertyVetoException;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.PooledConnection;
 import javax.sql.DataSource;
 
 import searchEngine.DBConnectionManager;
@@ -38,57 +31,15 @@ public class indexerDB {
     public static final String URL  = "jdbc:mysql://localhost:3306/inf141index?autoReconnect=true&useSSL=false";
     public static final String USER = "root";
     public static final String PW 	= "Buster2000";
-	
-    
-    // Creates datapool connection
-    // Followed example: http://www.java2s.com/Code/Java/Database-SQL-JDBC/PooledConnectionExample.htm
-//    private static Connection getConnection() throws NamingException, SQLException {
-//        InitialContext initCtx = createContext();
-//        String jndiName = "HrDS";
-//        ConnectionPoolDataSource dataSource = (ConnectionPoolDataSource) initCtx.lookup(jndiName);
-//        PooledConnection pooledConnection = dataSource.getPooledConnection();
-//        return pooledConnection.getConnection(); // Obtain connection from pool
-//	}
-//
-//    // Creates context
-//    private static InitialContext createContext() throws NamingException {
-//    	Properties env = new Properties();
-//    	env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.rmi.registry.RegistryContextFactory");
-//    	env.put(Context.PROVIDER_URL, "jdbc:mysql://localhost:3306");
-//    	InitialContext context = new InitialContext(env);
-//    	return context;
-//    }
-   
-    public static DataSource getMySQLDataSource() {
-        MysqlDataSource mysqlDS = null;
-        mysqlDS = new MysqlDataSource();
-		mysqlDS.setURL(URL);
-		mysqlDS.setUser(USER);
-		mysqlDS.setPassword(PW);
-        return mysqlDS;
-    }
-     
-    
-    private static Connection getConnection() throws PropertyVetoException, SQLException {
-    	ComboPooledDataSource cpds = new ComboPooledDataSource();
-    	cpds.setDriverClass( "org.postgresql.Driver" ); //loads the jdbc driver            
-    	cpds.setJdbcUrl(URL);
-    	cpds.setUser(USER);                                  
-    	cpds.setPassword(PW);
-		return cpds.getConnection();    
-    }
 
-    
     
 	// Updates the doc2docid table in the inf141index DB
 	public static void updateDoc2DocID(String docName, Integer docID) throws PropertyVetoException {
-        DataSource ds  		  = null;
 		Connection con		  = null;
         PreparedStatement pst = null;
 
         try {
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
+
         	con = DBConnectionManager.getConnectionFromPool();
 
             pst = con.prepareStatement("INSERT IGNORE INTO doc2docid (docName, docID) VALUES(?, ?)");
@@ -121,14 +72,11 @@ public class indexerDB {
 	
 	// updates the term2termid table in the inf141index DB
 	public static void updateTerm2TermID(String term, Integer termID) throws PropertyVetoException {
-        DataSource ds  		  = null;
 		Connection con		  = null;
         PreparedStatement pst = null;
 
         try {
 
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
         	con = DBConnectionManager.getConnectionFromPool();
 
         	pst = con.prepareStatement("INSERT IGNORE INTO term2termid (term, termID) VALUES(?, ?)");
@@ -160,14 +108,11 @@ public class indexerDB {
 	
 	// updates the termid2term table in the inf141index DB
 	public static void updateTermID2Term(Integer termID, String term) throws PropertyVetoException {
-        DataSource ds  		  = null;
 		Connection con		  = null;
         PreparedStatement pst = null;
         
         try {
 
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
         	con = DBConnectionManager.getConnectionFromPool();
 
         	pst = con.prepareStatement("INSERT IGNORE INTO termid2term (termID, term) VALUES(?, ?)");
@@ -199,14 +144,10 @@ public class indexerDB {
 
 	// Updates the doc2docid table in the inf141index DB
 	public static void updateDocID2TermList(Integer docID, String termList) throws PropertyVetoException {
-        DataSource ds  		  = null;
 		Connection con		  = null;
         PreparedStatement pst = null;
 
         try {
-
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
         	
         	con = DBConnectionManager.getConnectionFromPool();
             
@@ -239,14 +180,10 @@ public class indexerDB {
 	
 	// updates the termfrequency table in the inf141index DB
 	public static void updateTermFrequency(Integer termID, Integer docID, Integer frequency) throws PropertyVetoException {
-        DataSource ds  		  = null;
 		Connection con		  = null;
         PreparedStatement pst = null;
 
         try {
-
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
         	
         	con = DBConnectionManager.getConnectionFromPool();
             
@@ -281,7 +218,6 @@ public class indexerDB {
 	// Inserts values into termid2term table by retrieving
 	// data from term2termid table
 	public static void createTermID2Term () {
-        DataSource ds  		  = null;
 		Connection con		  = null;
         PreparedStatement pst = null;
         ResultSet rs 		  = null;
@@ -289,9 +225,6 @@ public class indexerDB {
         try {
 
 //            con = DriverManager.getConnection(URL, USER, PW);
-        	
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
         	
         	con = DBConnectionManager.getConnectionFromPool();
             
@@ -335,7 +268,6 @@ public class indexerDB {
 	// Inserts values into termfrequency table by retrieving
 	// data from term2termID table
 	public static void createTermFrequency () {
-		DataSource ds 		  = null;
         Connection con		  = null;
         PreparedStatement pst = null;
         ResultSet rs 		  = null;
@@ -343,9 +275,7 @@ public class indexerDB {
         try {
 
 //            con = DriverManager.getConnection(URL, USER, PW);
-        	
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
+
         	
         	con = DBConnectionManager.getConnectionFromPool();
             
@@ -398,7 +328,6 @@ public class indexerDB {
 	
 	// Retrieves the specified term's termID
 	public static int retrieveTermID (String term) {
-		DataSource ds		  = null;
         Connection con 		  = null;
         PreparedStatement pst = null;
         ResultSet rs 		  = null;
@@ -407,9 +336,6 @@ public class indexerDB {
         try {
 
 //            con = DriverManager.getConnection(URL, USER, PW);
-        	
-//        	ds = getMySQLDataSource();
-//            con = ds.getConnection();
         	
         	con = DBConnectionManager.getConnectionFromPool();
             
