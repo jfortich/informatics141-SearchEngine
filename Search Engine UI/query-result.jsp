@@ -1,8 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.sql.*" %>
-<% Class.forName("sun.jdbc.odbc.JdbcOdbcDriver"); %>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.util.*"%>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.util.HashMap" %>
 
-<html>
-    <head>
+<HTML>
+    <HEAD>
       <meta charset="UTF-8"/>
 
       <!-- Fonts -->
@@ -21,66 +23,81 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
 
       <title>Informatics 141 Search Engine</title>
-    </head>
+    </HEAD>
 
-    <body>
-        <h1 class=center>Top Result(s)</h1>
+    <BODY>
+      <% String query = request.getParameter("query"); %>
+      <h1 class="center results-title">Top 10 result(s) for "<%= query %>" </h1>
 
         <% 
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/inf141index?autoReconnect=true&useSSL=false", "root", "Buster2000");
-            Statement statement = connection.createStatement();
+            // Database credentials
+            String databaseURL   = "jdbc:mysql://localhost:3306/inf141index?autoReconnect=true&useSSL=false";
+            String databaseUSER  = "root";
+            String databasePW    = "Buster2000";
 
-            // Retrieve query from Web UI
-            String query        = request.getParameter("query");  
-            String[] queryTerms = query.split("\\s+");
+            String[] terms = query.split("\\s+");
 
-            // If the query contains multiple terms
-            if ( queryTerms.size() > 1) {
-              String termIDs = new StringBuilder();
+            // If the query has multiple terms
+            HashMap<String, Integer> term2ID = new HashMap<String, Integer>(); 
+            if (terms.length > 1) {
+                Class.forName("com.mysql.jdbc.Driver").newInstance(); 
+                Connection connection = DriverManager.getConnection(databaseURL, databaseUSER, databasePW);
+                Statement statement   = connection.createStatement() ;
 
-              // Goes through list of query terms and grabs their termIDs
-              for (String term : queryTerms) {
-                  ResultSet resultset = statement.executeQuery("SELECT termID FROM termid2term WHERE term = '" + term + "'") ; 
-                  termIDs.concat(resultset.getInt(1) + ",");
-              }
+                String termIDQuery          = "SELECT termID FROM termid2term WHERE term = '" + terms[0] + "'";
+                StringBuilder selectTermIDs = new StringBuilder(termIDQuery);
 
+                for (int i=1; i < terms.length; i++) {
+                    selectTermIDs.append(" UNION (SELECT termID FROM termid2term WHERE term = '" + terms[i] + "')");
+                }
+
+                String selectDocIDs = "SELECT distinct(docID), docName FROM termfrequency NATURAL JOIN doc2docid WHERE termID IN (" + selectTermIDs.toString() +") AND frequency >= 1 ORDER BY frequency DESC LIMIT 10";
+                ResultSet resultset = statement.executeQuery(selectDocIDs) ; 
+       %>
+
+            <TABLE CLASS="table table-striped table-hover table-condensed">
+                <TR>
+                    <TH>DOC ID</TH>
+                    <TH>DOC NAME</TH>
+                </TR>
+                <% while(resultset.next()){ %>
+                <TR>
+                    <TD> <%= resultset.getInt(1) %></td>
+                    <TD> <%= resultset.getString(2) %></TD>
+                </TR>
+                <% } %>
+            </TABLE>
+        <%
             }
 
-            // if the query contains a single term
+            // If the query is a single term
             else {
-              // Retrieve the term's termID
-              ResultSet resultset = statement.executeQuery("SELECT termID FROM termid2term WHERE term = '" + term + "'") ; 
-              int termID          = resultSet.getInt(1);
+                String term = query;
+                Class.forName("com.mysql.jdbc.Driver").newInstance(); 
+                Connection connection = DriverManager.getConnection(databaseURL, databaseUSER, databasePW);
+                Statement statement   = connection.createStatement() ;
 
-              // Retrieves the top 10 queries in descending order frequency
-              ResultSet resultset = statement.executeQuery("SELECT docID FROM termfrequency WHERE termID = '" + termID + "' AND frequency >= 1 ORDER BY frequency DESC LIMIT 10") ; 
-            
-              // If no queries found, print out message
-              if(!resultset.next()) {
-                out.println("Sorry, could not find any results for '" + query + "'");
-              } 
-
-              // If queries found use docID to retrieve docName
-              else {
-                while (resultset.next()) {
-                  int docID      = resultSet.getInt(1);
-                  int frequency  = resultSet.getInt(2); 
-                  resultset      = statement.executeQuery("SELECT * FROM doc2docid WHERE docID = '" + docID + "'") ''
+                String selectTermID = "(SELECT termID FROM termid2term WHERE term = '" + term + "')";
+                String selectDocIDs = "SELECT docID, docName FROM termfrequency NATURAL JOIN doc2docid WHERE termID = "+ selectTermID +" AND frequency >= 1 ORDER BY frequency DESC LIMIT 10";
+                ResultSet resultset = statement.executeQuery(selectDocIDs) ; 
         %>
 
-        <table border="1">
-            <tr>
-               <th>DocID </th>
-               <th>Doc Name </th>
-           </tr>
-           <tr>
-               <td> <%= resultset.getInt(1) %> </td>
-               <td> <%= resultset.getString(2) %> </td>
-           </tr>
-       </table>
-       <br>
-       <%   }
-           } 
-       %>
-    </body>
-</html>
+            <TABLE CLASS="table table-striped table-hover table-condensed">
+                <TR>
+                    <TH>DOC ID</TH>
+                    <TH>DOC NAME</TH>
+                </TR>
+                <% while(resultset.next()){ %>
+                <TR>
+                    <TD> <%= resultset.getInt(1) %></td>
+                    <TD> <%= resultset.getString(2) %></TD>
+                </TR>
+                <% } } %>
+            </TABLE>
+
+    <a class="btn btn-default btn-lg col-md-6 col-md-offset-3 search-again-button" href="search-engine-index.jsp"> 
+        <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Search Again
+    </a>
+
+    </BODY>
+</HTML>

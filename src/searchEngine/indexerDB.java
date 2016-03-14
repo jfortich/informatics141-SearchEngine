@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 
 import searchEngine.DBConnectionManager;
 
-
-
 public class indexerDB {
 	
     public static final String URL  = "jdbc:mysql://localhost:3306/inf141index?autoReconnect=true&useSSL=false";

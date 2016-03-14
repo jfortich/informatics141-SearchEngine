@@ -18,7 +18,6 @@ import java.util.Collections;
 
 import org.jsoup.Jsoup;
 
-
 public class parseHTML {
 
 	public static final String FILE_NAME = "processedHTMLPages.txt";
